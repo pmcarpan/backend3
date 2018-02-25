@@ -1,7 +1,10 @@
 package onlinestore.backend.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -11,6 +14,8 @@ public class Category {
 	private int id;
 	private String name;
 	private String description;
+	@OneToMany
+	private List<Product> products;
 	
 	public Category() {}
 
@@ -36,6 +41,14 @@ public class Category {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
 	}
 	
 }

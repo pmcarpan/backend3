@@ -1,7 +1,11 @@
 package onlinestore.backend.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -14,7 +18,10 @@ public class Product {
 	private double price;
 	private String name;
 	private String description;
-
+	@ManyToMany
+	private List<Seller> sellers;
+	@ManyToOne
+	private Category category;
 	// image? image address?
 	
 	public Product() {}
@@ -65,6 +72,22 @@ public class Product {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public List<Seller> getSellers() {
+		return sellers;
+	}
+
+	public void setSellers(List<Seller> sellers) {
+		this.sellers = sellers;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 	
 }

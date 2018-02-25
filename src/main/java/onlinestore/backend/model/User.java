@@ -1,7 +1,10 @@
 package onlinestore.backend.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -11,10 +14,14 @@ public class User {
 	private String lastname;
 	private String email;
 	private long phone;
+	private String address;
 	@Id
 	private String username;
 	private String password;
-	private boolean isAdmin;
+	private String role;
+	private boolean enabled;
+	@OneToMany
+	private List<Cart> carts;
 	
 	public User() {}
 
@@ -50,6 +57,14 @@ public class User {
 		this.phone = phone;
 	}
 
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -66,12 +81,28 @@ public class User {
 		this.password = password;
 	}
 
-	public boolean isAdmin() {
-		return isAdmin;
+	public String getRole() {
+		return role;
 	}
 
-	public void setAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public List<Cart> getCarts() {
+		return carts;
+	}
+
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
 	}
 
 }

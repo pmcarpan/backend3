@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +16,8 @@ public class Cart {
 	private int numItems;
 	private String status;
 	private double totPrice;
-	private String username;
+	@ManyToOne
+	private User user;
 	@ManyToMany
 	private List<Product> products;
 	
@@ -53,12 +55,12 @@ public class Cart {
 		this.totPrice = totPrice;
 	}
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public List<Product> getProducts() {
@@ -68,6 +70,5 @@ public class Cart {
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
-	
 	
 }
