@@ -1,4 +1,4 @@
-package onlinestore.backend.model;
+package com.onlinestore.backend.model;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
-package onlinestore.backend;
+package com.onlinestore.backend;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import onlinestore.backend.config.AppConfig;
-import onlinestore.backend.dao.ProductDAO;
-import onlinestore.backend.model.Product;
+import com.onlinestore.backend.config.AppConfig;
+import com.onlinestore.backend.dao.ProductDAO;
+import com.onlinestore.backend.model.Product;
 
 public class Test {
 

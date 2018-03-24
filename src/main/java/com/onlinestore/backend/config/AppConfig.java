@@ -1,4 +1,4 @@
-package onlinestore.backend.config;
+package com.onlinestore.backend.config;
 
 import java.util.Properties;
 
@@ -14,15 +14,15 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import onlinestore.backend.model.Cart;
-import onlinestore.backend.model.Category;
-import onlinestore.backend.model.Product;
-import onlinestore.backend.model.Seller;
-import onlinestore.backend.model.User;
+import com.onlinestore.backend.model.Cart;
+import com.onlinestore.backend.model.Category;
+import com.onlinestore.backend.model.Product;
+import com.onlinestore.backend.model.Seller;
+import com.onlinestore.backend.model.User;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan("onlinestore.backend")
+@ComponentScan("com.onlinestore.backend")
 public class AppConfig {
 
 	@Bean(name = "dataSource")
@@ -39,12 +39,11 @@ public class AppConfig {
 
 	@Autowired
 	@Bean(name = "sessionFactory")
-	public SessionFactory getSessionFactory(DataSource dataSource)
-	{	
+	public SessionFactory getSessionFactory(DataSource dataSource) {	
 		LocalSessionFactoryBuilder factoryBean = new LocalSessionFactoryBuilder(dataSource);
 
 		Properties props = new Properties();
-		props.put("hibernate.hbm2ddl.auto", "create");
+		props.put("hibernate.hbm2ddl.auto", "update");
 		props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 		props.put("hibernate.show_sql", true);
 		

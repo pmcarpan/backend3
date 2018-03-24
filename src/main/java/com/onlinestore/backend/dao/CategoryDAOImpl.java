@@ -1,4 +1,4 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
@@ -13,46 +13,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import onlinestore.backend.model.Seller;
+import com.onlinestore.backend.model.Category;
 
 @Repository
 @Transactional
-public class SellerDAOImpl implements SellerDAO {
+public class CategoryDAOImpl implements CategoryDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
 	
-	public void saveOrUpdate(Seller s) {
-		sessionFactory.getCurrentSession().saveOrUpdate(s);
+	public void saveOrUpdate(Category c) {
+		sessionFactory.getCurrentSession().saveOrUpdate(c);	
 	}
 
-	public List<Seller> getAllSellers() {
+	public List<Category> getAllCategories() {
 		Session s = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Seller> criteria = builder.createQuery(Seller.class);
-        Root<Seller> root = criteria.from(Seller.class);
+        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
+        Root<Category> root = criteria.from(Category.class);
         criteria.select(root);
         
-        Query<Seller> q = s.createQuery(criteria);
+        Query<Category> q = s.createQuery(criteria);
         
         return q.getResultList();
 	}
 
-	public Seller getSeller(int id) {
+	public Category getCategory(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Seller> criteria = builder.createQuery(Seller.class);
-        Root<Seller> root = criteria.from(Seller.class);
+        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
+        Root<Category> root = criteria.from(Category.class);
         criteria.select(root);
         criteria.where( builder.equal( root.get("id"), id ) );
         
-        Query<Seller> q = s.createQuery(criteria);
+        Query<Category> q = s.createQuery(criteria);
         
         if (q == null) {
         	return null;
         }
         
-        List<Seller> l = q.getResultList();
+        List<Category> l = q.getResultList();
         
         if (l == null || l.size() == 0) {
         	return null;
@@ -62,9 +62,9 @@ public class SellerDAOImpl implements SellerDAO {
 	}
 
 	public void delete(int id) {
-		Seller s = new Seller();
-		s.setId(id);
-		sessionFactory.getCurrentSession().delete(s);
+		Category c = new Category();
+		c.setId(id);
+		sessionFactory.getCurrentSession().delete(c);
 	}
 
 }

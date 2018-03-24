@@ -1,8 +1,8 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
-import onlinestore.backend.model.Cart;
+import com.onlinestore.backend.model.Cart;
 
 public interface CartDAO {
 

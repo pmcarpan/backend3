@@ -1,8 +1,8 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
-import onlinestore.backend.model.Seller;
+import com.onlinestore.backend.model.Seller;
 
 public interface SellerDAO {
 

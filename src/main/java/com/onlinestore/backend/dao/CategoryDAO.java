@@ -1,8 +1,8 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
-import onlinestore.backend.model.Category;
+import com.onlinestore.backend.model.Category;
 
 public interface CategoryDAO {
 

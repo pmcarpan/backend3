@@ -1,4 +1,4 @@
-package onlinestore.backend;
+package com.onlinestore.backend;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import onlinestore.backend.model.Cart;
+import com.onlinestore.backend.model.Cart;
 
 @Repository
 @Transactional

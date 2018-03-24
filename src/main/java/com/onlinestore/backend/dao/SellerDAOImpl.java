@@ -1,4 +1,4 @@
-package onlinestore.backend.dao;
+package com.onlinestore.backend.dao;
 
 import java.util.List;
 
@@ -13,46 +13,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import onlinestore.backend.model.User;
+import com.onlinestore.backend.model.Seller;
 
 @Repository
 @Transactional
-public class UserDAOImpl implements UserDAO {
+public class SellerDAOImpl implements SellerDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-
-	public void saveOrUpdate(User u) {
-		sessionFactory.getCurrentSession().saveOrUpdate(u);	
+	
+	public void saveOrUpdate(Seller s) {
+		sessionFactory.getCurrentSession().saveOrUpdate(s);
 	}
 
-	public List<User> getAllUsers() {
+	public List<Seller> getAllSellers() {
 		Session s = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
+        CriteriaQuery<Seller> criteria = builder.createQuery(Seller.class);
+        Root<Seller> root = criteria.from(Seller.class);
         criteria.select(root);
         
-        Query<User> q = s.createQuery(criteria);
+        Query<Seller> q = s.createQuery(criteria);
         
         return q.getResultList();
 	}
 
-	public User getUser(String username) {
+	public Seller getSeller(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
+        CriteriaQuery<Seller> criteria = builder.createQuery(Seller.class);
+        Root<Seller> root = criteria.from(Seller.class);
         criteria.select(root);
-        criteria.where( builder.equal( root.get("username"), username ) );
+        criteria.where( builder.equal( root.get("id"), id ) );
         
-        Query<User> q = s.createQuery(criteria);
+        Query<Seller> q = s.createQuery(criteria);
         
         if (q == null) {
         	return null;
         }
         
-        List<User> l = q.getResultList();
+        List<Seller> l = q.getResultList();
         
         if (l == null || l.size() == 0) {
         	return null;
@@ -61,20 +61,10 @@ public class UserDAOImpl implements UserDAO {
         return l.get(0);
 	}
 
-	public void delete(String username) {
-		User u = new User();
-		u.setUsername(username);
-		sessionFactory.getCurrentSession().delete(u);
+	public void delete(int id) {
+		Seller s = new Seller();
+		s.setId(id);
+		sessionFactory.getCurrentSession().delete(s);
 	}
 
-	public boolean validate(String username, String password) {
-		User u = getUser(username);
-		
-		if (u == null) {
-			return false;
-		}
-		
-		return u.getPassword().equals(password);
-	}
-	
 }
