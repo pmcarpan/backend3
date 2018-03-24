@@ -3,18 +3,20 @@ package com.onlinestore.backend.model;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table
 public class Seller {
 	@Id
+	@GeneratedValue
 	private int id;
 	private String name;
 	private String address;
-	@ManyToMany
+	@OneToMany
 	private List<Product> products;
 	
 	public Seller() {}
