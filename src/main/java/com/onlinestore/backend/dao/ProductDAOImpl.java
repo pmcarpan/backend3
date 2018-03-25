@@ -1,5 +1,6 @@
 package com.onlinestore.backend.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.onlinestore.backend.model.Category;
 import com.onlinestore.backend.model.Product;
+import com.onlinestore.backend.model.Seller;
 
 @Repository
 @Transactional
@@ -21,8 +24,29 @@ public class ProductDAOImpl implements ProductDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	@Autowired
+	private CategoryDAO cDAO;
+	@Autowired
+	private SellerDAO sDAO;
 	
 	public void saveOrUpdate(Product p) {
+		Seller s = sDAO.getSeller(p.getSellerId());
+		Category c = cDAO.getCategory(p.getCategoryId());
+		
+		p.setCategory(c);
+		p.setSeller(s);
+		
+		List<Product> l;
+		l = c.getProducts();
+		if (l == null) l = new ArrayList<>();
+		l.add(p);
+		cDAO.saveOrUpdate(c);
+		
+		l = s.getProducts();
+		if (l == null) l = new ArrayList<>();
+		l.add(p);
+		sDAO.saveOrUpdate(s);
+		
 		sessionFactory.getCurrentSession().saveOrUpdate(p);	
 	}
 
@@ -88,8 +112,14 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	public void delete(int id) {
-		Product p = new Product();
-		p.setId(id);
+		Product p = getProduct(id);
+		
+		Seller s = sDAO.getSeller(p.getSellerId());
+		s.getProducts().remove(p);
+		
+		Category c = cDAO.getCategory(p.getCategoryId());
+		c.getProducts().remove(p);
+		
 		sessionFactory.getCurrentSession().delete(p);
 	}
 
