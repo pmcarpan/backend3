@@ -145,6 +145,7 @@ public class ProductDAOImpl implements ProductDAO {
 		c.getProducts().remove(p); cDAO.saveOrUpdate(c);
 		System.out.println(c.getProducts());
 		Seller s = p.getSeller();
+		System.out.println(s.getProducts());
 		s.getProducts().remove(p); sDAO.saveOrUpdate(s);
 		System.out.println(s.getProducts());
 //
