@@ -1,15 +1,18 @@
 package com.onlinestore.backend.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class User {
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String firstname;
 	private String lastname;
 	private String email;
@@ -20,8 +23,8 @@ public class User {
 	private String password;
 	private String role;
 	private boolean enabled;
-	@OneToMany
-	private List<Cart> carts;
+	@OneToMany(fetch = FetchType.EAGER)
+	private List<OrderDetail> orders;
 	
 	public User() {}
 
@@ -97,12 +100,12 @@ public class User {
 		this.enabled = enabled;
 	}
 
-	public List<Cart> getCarts() {
-		return carts;
+	public List<OrderDetail> getOrders() {
+		return orders;
 	}
 
-	public void setCarts(List<Cart> carts) {
-		this.carts = carts;
+	public void setOrders(List<OrderDetail> orders) {
+		this.orders = orders;
 	}
 
 }

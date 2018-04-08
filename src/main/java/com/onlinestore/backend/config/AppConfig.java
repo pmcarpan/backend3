@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.onlinestore.backend.model.Cart;
 import com.onlinestore.backend.model.Category;
+import com.onlinestore.backend.model.OrderDetail;
 import com.onlinestore.backend.model.Product;
 import com.onlinestore.backend.model.Seller;
 import com.onlinestore.backend.model.User;
@@ -50,7 +51,7 @@ public class AppConfig {
 		factoryBean.addProperties(props);
 		
 		factoryBean.addAnnotatedClasses(User.class, Cart.class, Seller.class, 
-										Category.class, Product.class);
+										Category.class, Product.class, OrderDetail.class);
 		
 		return factoryBean.buildSessionFactory();
 	}

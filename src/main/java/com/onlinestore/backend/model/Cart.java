@@ -1,23 +1,23 @@
 package com.onlinestore.backend.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table
-public class Cart {
+public class Cart implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
+	@GeneratedValue
 	private int id;
 	private int numItems;
-	private String status;
 	private double totPrice;
-	@ManyToOne
-	private User user;
 	@ManyToMany
 	private List<Product> products;
 	
@@ -38,14 +38,6 @@ public class Cart {
 	public void setNumItems(int numItems) {
 		this.numItems = numItems;
 	}
-	
-	public String getStatus() {
-		return status;
-	}
-	
-	public void setStatus(String status) {
-		this.status = status;
-	}
 
 	public double getTotPrice() {
 		return totPrice;
@@ -53,14 +45,6 @@ public class Cart {
 
 	public void setTotPrice(double totPrice) {
 		this.totPrice = totPrice;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public List<Product> getProducts() {

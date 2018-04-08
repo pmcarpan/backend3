@@ -7,6 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -30,24 +31,49 @@ public class ProductDAOImpl implements ProductDAO {
 	private SellerDAO sDAO;
 	
 	public void saveOrUpdate(Product p) {
-		Seller s = sDAO.getSeller(p.getSellerId());
-		Category c = cDAO.getCategory(p.getCategoryId());
+		Product p1;
+		Seller s;
+		Category c;
 		
-		p.setCategory(c);
-		p.setSeller(s);
+		p1 = getProduct(p.getId());
+		
+		if (p1 != null) {
+			s = p1.getSeller();
+			if (s != null) {s.getProducts().remove(p1); sDAO.saveOrUpdate(s);}
+			c = p1.getCategory();
+			if (c != null) {c.getProducts().remove(p1); cDAO.saveOrUpdate(c);}
+		}
+		
+		p1.setId(p.getId());
+		p1.setName(p.getName());
+		p1.setDescription(p.getDescription());
+		p1.setPrice(p.getPrice());
+		p1.setCategoryId(p.getCategoryId());
+		p1.setSellerId(p.getSellerId());
+		
+		s = sDAO.getSeller(p1.getSellerId());
+		c = cDAO.getCategory(p1.getCategoryId());
+		p1.setSeller(s);
+		p1.setCategory(c);
 		
 		List<Product> l;
 		l = c.getProducts();
 		if (l == null) l = new ArrayList<>();
-		l.add(p);
+		l.add(p1);
 		cDAO.saveOrUpdate(c);
 		
 		l = s.getProducts();
 		if (l == null) l = new ArrayList<>();
-		l.add(p);
+		l.add(p1);
 		sDAO.saveOrUpdate(s);
 		
-		sessionFactory.getCurrentSession().saveOrUpdate(p);	
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(p1);
+		} 
+		catch (HibernateException e) {
+			System.out.println("ERROR: PRODUCTDAOIMPL");
+			e.printStackTrace();
+		}	
 	}
 
 	public List<Product> getAllProducts() {
@@ -112,14 +138,19 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	public void delete(int id) {
+		System.out.println("---");
 		Product p = getProduct(id);
 		
-		Seller s = sDAO.getSeller(p.getSellerId());
-		s.getProducts().remove(p);
-		
-		Category c = cDAO.getCategory(p.getCategoryId());
-		c.getProducts().remove(p);
-		
+		Category c = p.getCategory();
+		c.getProducts().remove(p); cDAO.saveOrUpdate(c);
+		System.out.println(c.getProducts());
+		Seller s = p.getSeller();
+		s.getProducts().remove(p); sDAO.saveOrUpdate(s);
+		System.out.println(s.getProducts());
+//
+//		Category c = cDAO.getCategory(p.getCategoryId());
+//		c.getProducts().remove(p);
+
 		sessionFactory.getCurrentSession().delete(p);
 	}
 

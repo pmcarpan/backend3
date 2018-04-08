@@ -3,6 +3,7 @@ package com.onlinestore.backend.dao;
 import java.util.List;
 
 import com.onlinestore.backend.model.Cart;
+import com.onlinestore.backend.model.Product;
 
 public interface CartDAO {
 
@@ -16,4 +17,5 @@ public interface CartDAO {
 	
 	void delete(int id);
 	
+	void addProduct(Cart c, Product p);
 }
