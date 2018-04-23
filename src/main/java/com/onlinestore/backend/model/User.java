@@ -1,30 +1,61 @@
 package com.onlinestore.backend.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	@NotEmpty (message = "Please enter your first name")
 	private String firstname;
+	
+	@NotEmpty (message = "Please enter your last name")
 	private String lastname;
+	
+	@NotEmpty (message = "Please enter your email address")
+	@Email (message = "Please enter your email address")
 	private String email;
-	private long phone;
+	
+	@NotNull (message = "Phone number should contain atleast 10 digits")
+	@Min(value = 1000000000, message = "Phone number should contain atleast 10 digits")
+	private Long phone;
+	
+	@NotEmpty (message = "Please enter your address")
 	private String address;
+	
 	@Id
+	@Length (min = 5, message = "Username must contain atleast 5 characters")
 	private String username;
+	
+	@Length (min = 8, message = "Password must contain atleast 8 characters")
 	private String password;
+	
 	private String role;
+	
 	private boolean enabled;
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<OrderDetail> orders;
+	
+	@OneToOne(cascade = CascadeType.REMOVE)
+	private Cart cart;
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private Set<OrderDetail> orders = new HashSet<>();
 	
 	public User() {}
 
@@ -52,11 +83,11 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public long getPhone() {
+	public Long getPhone() {
 		return phone;
 	}
 
-	public void setPhone(long phone) {
+	public void setPhone(Long phone) {
 		this.phone = phone;
 	}
 
@@ -100,11 +131,19 @@ public class User implements Serializable {
 		this.enabled = enabled;
 	}
 
-	public List<OrderDetail> getOrders() {
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public Set<OrderDetail> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(List<OrderDetail> orders) {
+	public void setOrders(Set<OrderDetail> orders) {
 		this.orders = orders;
 	}
 

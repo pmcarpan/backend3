@@ -1,10 +1,14 @@
 package com.onlinestore.backend.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -14,12 +18,12 @@ import javax.persistence.Table;
 public class Cart implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private int numItems;
 	private double totPrice;
-	@ManyToMany
-	private List<Product> products;
+	@ManyToMany(fetch = FetchType.EAGER /*, cascade = CascadeType.REMOVE*/ )
+	private Set<Product> products = new HashSet<>();
 	
 	public Cart() {}
 
@@ -47,11 +51,11 @@ public class Cart implements Serializable {
 		this.totPrice = totPrice;
 	}
 
-	public List<Product> getProducts() {
+	public Set<Product> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<Product> products) {
+	public void setProducts(Set<Product> products) {
 		this.products = products;
 	}
 	

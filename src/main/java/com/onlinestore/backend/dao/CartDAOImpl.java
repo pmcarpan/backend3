@@ -1,7 +1,7 @@
 package com.onlinestore.backend.dao;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinestore.backend.model.Cart;
 import com.onlinestore.backend.model.Product;
+import com.onlinestore.backend.model.User;
 
 @Repository
 @Transactional
@@ -23,6 +24,12 @@ public class CartDAOImpl implements CartDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	@Autowired
+	private CartDAO cDAO;
+	@Autowired
+	private ProductDAO pDAO;
+	@Autowired
+	private UserDAO uDAO;
 
 	public void saveOrUpdate(Cart c) {
 		sessionFactory.getCurrentSession().saveOrUpdate(c);	
@@ -76,19 +83,46 @@ public class CartDAOImpl implements CartDAO {
         return l.get(0);
 	}
 
-	public void addProduct(Cart c, Product p) {
-		System.out.println("CartDAO - addProduct");
-		List<Product> l = c.getProducts();
-		if (l == null) {
-			l = new ArrayList<>();
-			c.setProducts(l);
-		}
+	public void addProduct(String username, int productId) {
+		System.out.println("\nCartDAO - addProduct");
+		User u = uDAO.getUser(username);
+		Product p = pDAO.getProduct(productId);
+		Cart c = u.getCart();
+		
+		Set<Product> l = c.getProducts();
+		
+		System.out.println("Initial: " + l);
+
 		if (!l.contains(p)) {
-			l.add(p); // System.out.println("Added");
+			l.add(p); 
 			c.setNumItems(c.getNumItems() + 1);
-			c.setTotPrice(c.getTotPrice() + p.getPrice());
+			cDAO.saveOrUpdate(c);
 		}
-		// System.out.println("cart " + c.getProducts());
+		
+		System.out.println("Final: " + l);
+
+	}
+	
+	public void removeProduct(String username, int productId) {
+		User u = uDAO.getUser(username);
+		Cart c = u.getCart();
+		Set<Product> l = c.getProducts();
+		Product p = pDAO.getProduct(productId);
+		l.remove(p);
+		c.setNumItems(c.getNumItems() - 1);
+		
+		saveOrUpdate(c);
+	}
+	
+	public void calcPrice(int id) {
+		Cart c = getCart(id);
+		double tot = 0;
+		for (Product p : c.getProducts()) {
+			System.out.println("Product " + p.getId() + "Price " + p.getPrice());
+			tot += p.getPrice();
+		}
+		c.setTotPrice(tot);
+		saveOrUpdate(c);
 	}
 	
 	public void delete(int id) {

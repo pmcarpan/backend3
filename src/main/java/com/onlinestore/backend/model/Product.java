@@ -4,27 +4,35 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table
 public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private int categoryId;
 	private int sellerId;
 	private double price;
 	private String name;
 	private String description;
-	@ManyToOne
+	@ManyToOne // (cascade = CascadeType.REMOVE)
 	private Seller seller;
-	@ManyToOne
+	@ManyToOne // (cascade = CascadeType.REMOVE)
 	private Category category;
-	// image? image address?
+	
+	private String imageAddress;
+	
+	@Transient
+	private MultipartFile image;
 	
 	public Product() {}
 
@@ -90,6 +98,22 @@ public class Product implements Serializable {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public String getImageAddress() {
+		return imageAddress;
+	}
+
+	public void setImageAddress(String imageAddress) {
+		this.imageAddress = imageAddress;
+	}
+
+	public MultipartFile getImage() {
+		return image;
+	}
+
+	public void setImage(MultipartFile image) {
+		this.image = image;
 	}
 	
 }

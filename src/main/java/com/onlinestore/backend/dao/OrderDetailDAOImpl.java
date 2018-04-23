@@ -1,7 +1,6 @@
 package com.onlinestore.backend.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +19,17 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 	private SessionFactory sessionFactory;
 	@Autowired
 	private UserDAO uDAO;
-	@Autowired
-	private CartDAO cDAO;
+//	@Autowired
+//	private CartDAO cDAO;
 
 	@Override
-	public void saveOrUpdate(OrderDetail oD, String username, Cart c) {
-		cDAO.saveOrUpdate(c);
+	public void saveOrUpdate(OrderDetail oD, String username) {
 		User u = uDAO.getUser(username);
+		Cart c = u.getCart();
 		oD.setCart(c);
 		oD.setUser(u);
 		oD.setStatus("Under Process");
-		List<OrderDetail> orders = u.getOrders();
-		if (orders == null) {
-			orders = new ArrayList<>();
-			u.setOrders(orders);
-		}
+		Set<OrderDetail> orders = u.getOrders();
 		orders.add(oD);
 		uDAO.saveOrUpdate(u);
 		

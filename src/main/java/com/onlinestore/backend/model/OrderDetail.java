@@ -2,8 +2,10 @@ package com.onlinestore.backend.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -14,12 +16,12 @@ import javax.persistence.Table;
 public class OrderDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String status, billingAddress, deliveryAddress;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.REMOVE)
 	private Cart cart;
-	@ManyToOne
+	@ManyToOne // (cascade = CascadeType.REMOVE)
 	private User user;
 	
 	public OrderDetail() {}

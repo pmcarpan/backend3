@@ -1,6 +1,5 @@
 package com.onlinestore.backend.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,49 +30,50 @@ public class ProductDAOImpl implements ProductDAO {
 	private SellerDAO sDAO;
 	
 	public void saveOrUpdate(Product p) {
-		Product p1;
+		Product p1 = getProduct(p.getId());
 		Seller s;
 		Category c;
 		
-		p1 = getProduct(p.getId());
-		
-		if (p1 != null) {
-			s = p1.getSeller();
-			if (s != null) {s.getProducts().remove(p1); sDAO.saveOrUpdate(s);}
-			c = p1.getCategory();
-			if (c != null) {c.getProducts().remove(p1); cDAO.saveOrUpdate(c);}
+		if (p1 == null) {
+			s = sDAO.getSeller(p.getSellerId());
+			p.setSeller(s);
+			s.getProducts().add(p);
+			c = cDAO.getCategory(p.getCategoryId());
+			p.setCategory(c);
+			c.getProducts().add(p);
+			sessionFactory.getCurrentSession().saveOrUpdate(p);
+			
+			System.out.println("Sellers : " + s.getProducts());
+			System.out.println("Categories : " + c.getProducts());
+		}
+		else {
+			p1.setName(p.getName());
+			p1.setDescription(p.getDescription());
+			p1.setPrice(p.getPrice());
+			
+			if (p1.getCategoryId() != p.getCategoryId()) {
+				c = cDAO.getCategory(p1.getCategoryId());
+				c.getProducts().remove(p1);
+				
+				p1.setCategoryId(p.getCategoryId());
+				c = cDAO.getCategory(p1.getCategoryId());
+				p1.setCategory(c);
+				c.getProducts().add(p1);
+			}
+			
+			if (p1.getSellerId() != p.getSellerId()) {
+				s = sDAO.getSeller(p1.getSellerId());
+				s.getProducts().remove(p1);
+				
+				p1.setSellerId(p.getSellerId());
+				s = sDAO.getSeller(p1.getSellerId());
+				p1.setSeller(s);
+				s.getProducts().add(p1);
+			}
+			
+			sessionFactory.getCurrentSession().saveOrUpdate(p1);
 		}
 		
-		p1.setId(p.getId());
-		p1.setName(p.getName());
-		p1.setDescription(p.getDescription());
-		p1.setPrice(p.getPrice());
-		p1.setCategoryId(p.getCategoryId());
-		p1.setSellerId(p.getSellerId());
-		
-		s = sDAO.getSeller(p1.getSellerId());
-		c = cDAO.getCategory(p1.getCategoryId());
-		p1.setSeller(s);
-		p1.setCategory(c);
-		
-		List<Product> l;
-		l = c.getProducts();
-		if (l == null) l = new ArrayList<>();
-		l.add(p1);
-		cDAO.saveOrUpdate(c);
-		
-		l = s.getProducts();
-		if (l == null) l = new ArrayList<>();
-		l.add(p1);
-		sDAO.saveOrUpdate(s);
-		
-		try {
-			sessionFactory.getCurrentSession().saveOrUpdate(p1);
-		} 
-		catch (HibernateException e) {
-			System.out.println("ERROR: PRODUCTDAOIMPL");
-			e.printStackTrace();
-		}	
 	}
 
 	public List<Product> getAllProducts() {
@@ -138,21 +138,30 @@ public class ProductDAOImpl implements ProductDAO {
 	}
 
 	public void delete(int id) {
-		System.out.println("---");
-		Product p = getProduct(id);
-		
-		Category c = p.getCategory();
-		c.getProducts().remove(p); cDAO.saveOrUpdate(c);
-		System.out.println(c.getProducts());
-		Seller s = p.getSeller();
-		System.out.println(s.getProducts());
-		s.getProducts().remove(p); sDAO.saveOrUpdate(s);
-		System.out.println(s.getProducts());
-//
-//		Category c = cDAO.getCategory(p.getCategoryId());
-//		c.getProducts().remove(p);
-
-		sessionFactory.getCurrentSession().delete(p);
+		try {
+			System.out.println("\nProductDAOImpl delete()");
+			
+			Product p = getProduct(id);
+			Seller s = p.getSeller();
+			Category c = p.getCategory();
+			
+//			System.out.println("Sellers : " + s.getProducts());
+//			System.out.println("Categories : " + c.getProducts());
+			
+			s.getProducts().remove(p);
+			c.getProducts().remove(p);
+			
+			// p.setSeller(null);
+			// p.setCategory(null);
+			
+//			System.out.println("Sellers : " + s.getProducts());
+//			System.out.println("Categories : " + c.getProducts());
+			
+			sessionFactory.getCurrentSession().delete(p);
+		} catch (Exception e) {
+			System.out.println("ProductDAOIMPL delete()");
+			e.printStackTrace();
+		}
 	}
 
 }
