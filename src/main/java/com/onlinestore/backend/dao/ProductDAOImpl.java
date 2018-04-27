@@ -1,12 +1,13 @@
 package com.onlinestore.backend.dao;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -22,6 +23,9 @@ import com.onlinestore.backend.model.Seller;
 @Transactional
 public class ProductDAOImpl implements ProductDAO {
 
+	private static final String IMAGEFOLDER = 
+			"C:\\Users\\Supratik basu\\git\\frontend3\\src\\main\\webapp\\resources\\images\\products\\";
+	
 	@Autowired
 	private SessionFactory sessionFactory;
 	@Autowired
@@ -35,47 +39,90 @@ public class ProductDAOImpl implements ProductDAO {
 		Category c;
 		
 		if (p1 == null) {
-			s = sDAO.getSeller(p.getSellerId());
-			p.setSeller(s);
-			s.getProducts().add(p);
-			c = cDAO.getCategory(p.getCategoryId());
-			p.setCategory(c);
-			c.getProducts().add(p);
-			sessionFactory.getCurrentSession().saveOrUpdate(p);
+			save(p);
+			storeImage(p); // after save, p has some id != 0
 			
-			System.out.println("Sellers : " + s.getProducts());
-			System.out.println("Categories : " + c.getProducts());
+			System.out.println(p.getId());
+//			System.out.println("Sellers : " + s.getProducts());
+//			System.out.println("Categories : " + c.getProducts());
 		}
 		else {
-			p1.setName(p.getName());
-			p1.setDescription(p.getDescription());
-			p1.setPrice(p.getPrice());
-			
-			if (p1.getCategoryId() != p.getCategoryId()) {
-				c = cDAO.getCategory(p1.getCategoryId());
-				c.getProducts().remove(p1);
-				
-				p1.setCategoryId(p.getCategoryId());
-				c = cDAO.getCategory(p1.getCategoryId());
-				p1.setCategory(c);
-				c.getProducts().add(p1);
-			}
-			
-			if (p1.getSellerId() != p.getSellerId()) {
-				s = sDAO.getSeller(p1.getSellerId());
-				s.getProducts().remove(p1);
-				
-				p1.setSellerId(p.getSellerId());
-				s = sDAO.getSeller(p1.getSellerId());
-				p1.setSeller(s);
-				s.getProducts().add(p1);
-			}
-			
-			sessionFactory.getCurrentSession().saveOrUpdate(p1);
+			update(p);
 		}
 		
 	}
 
+	private void storeImage(Product p) {
+		String ext = p.getImage().getOriginalFilename();
+		ext = "." + ext.substring(ext.lastIndexOf(".") + 1);
+		
+		File f = new File(IMAGEFOLDER + "Product" + p.getId() + ext);
+		
+		p.setImageAddress("Product" + p.getId() + ext);
+		
+		try {
+			p.getImage().transferTo(f);
+		} 
+		catch (IllegalStateException e) {
+			e.printStackTrace();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void save(Product p) {
+		Seller s;
+		Category c;
+		
+		s = sDAO.getSeller(p.getSellerId());
+		p.setSeller(s);
+		s.getProducts().add(p);
+		
+		c = cDAO.getCategory(p.getCategoryId());
+		p.setCategory(c);
+		c.getProducts().add(p);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(p);
+	}
+	
+	private void update(Product p) {
+		Product p1 = getProduct(p.getId());
+		Seller s;
+		Category c;
+		
+		p1.setName(p.getName());
+		p1.setDescription(p.getDescription());
+		p1.setPrice(p.getPrice());
+		
+		if (p1.getCategoryId() != p.getCategoryId()) {
+			c = cDAO.getCategory(p1.getCategoryId());
+			c.getProducts().remove(p1);
+			
+			p1.setCategoryId(p.getCategoryId());
+			c = cDAO.getCategory(p1.getCategoryId());
+			p1.setCategory(c);
+			c.getProducts().add(p1);
+		}
+		
+		if (p1.getSellerId() != p.getSellerId()) {
+			s = sDAO.getSeller(p1.getSellerId());
+			s.getProducts().remove(p1);
+			
+			p1.setSellerId(p.getSellerId());
+			s = sDAO.getSeller(p1.getSellerId());
+			p1.setSeller(s);
+			s.getProducts().add(p1);
+		}
+		
+		p1.setImage(p.getImage());
+		if (p1.getImage().getSize() != 0) {
+			storeImage(p1);
+		}
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(p1);
+	}
+	
 	public List<Product> getAllProducts() {
 		Session s = sessionFactory.getCurrentSession();
 		CriteriaBuilder builder = s.getCriteriaBuilder();
