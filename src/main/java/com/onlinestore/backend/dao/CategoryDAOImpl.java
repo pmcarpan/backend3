@@ -2,6 +2,7 @@ package com.onlinestore.backend.dao;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinestore.backend.model.Category;
+import com.onlinestore.backend.model.Seller;
 
 @Repository
 @Transactional
@@ -23,36 +25,23 @@ public class CategoryDAOImpl implements CategoryDAO {
 	private SessionFactory sessionFactory;
 	
 	public void saveOrUpdate(Category c) {
+		c.setEnabled(true);
 		sessionFactory.getCurrentSession().saveOrUpdate(c);	
 	}
 
 	public List<Category> getAllCategories() {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
-        Root<Category> root = criteria.from(Category.class);
-        criteria.select(root);
+		TypedQuery<Category> query = s.createQuery("from Category where enabled = true", Category.class);
         
-        Query<Category> q = s.createQuery(criteria);
-        
-        return q.getResultList();
+        return query.getResultList();
 	}
 
 	public Category getCategory(int id) {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
-        Root<Category> root = criteria.from(Category.class);
-        criteria.select(root);
-        criteria.where( builder.equal( root.get("id"), id ) );
-        
-        Query<Category> q = s.createQuery(criteria);
-        
-        if (q == null) {
-        	return null;
-        }
-        
-        List<Category> l = q.getResultList();
+		TypedQuery<Category> query = s.createQuery("from Category where id = :id", Category.class);
+        query.setParameter("id", id);
+		
+        List<Category> l = query.getResultList();
         
         if (l == null || l.size() == 0) {
         	return null;
@@ -62,9 +51,10 @@ public class CategoryDAOImpl implements CategoryDAO {
 	}
 
 	public void delete(int id) {
-		Category c = new Category();
-		c.setId(id);
-		sessionFactory.getCurrentSession().delete(c);
+		Session sess = sessionFactory.getCurrentSession();
+		Category c = getCategory(id);
+		c.setEnabled(false);
+		sess.saveOrUpdate(c);
 	}
 
 }

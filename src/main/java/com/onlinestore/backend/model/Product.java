@@ -9,7 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -21,11 +24,20 @@ public class Product implements Serializable {
 	private int id;
 	private int categoryId;
 	private int sellerId;
-	private double price;
+	
+	@NotNull(message = "Price must be greater than 100.00")
+	@Min(value = 100, message = "Price must be greater than 100.00")
+	private Double price;
+	
+	@NotEmpty(message = "Product name cannot be empty")
 	private String name;
+	
+	@NotEmpty(message = "Product description cannot be empty")
 	private String description;
+	
 	@ManyToOne // (cascade = CascadeType.REMOVE)
 	private Seller seller;
+	
 	@ManyToOne // (cascade = CascadeType.REMOVE)
 	private Category category;
 	
@@ -33,6 +45,8 @@ public class Product implements Serializable {
 	
 	@Transient
 	private MultipartFile image;
+	
+	private boolean enabled;
 	
 	public Product() {}
 
@@ -76,11 +90,11 @@ public class Product implements Serializable {
 		this.sellerId = sellerId;
 	}
 
-	public double getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
@@ -114,6 +128,14 @@ public class Product implements Serializable {
 
 	public void setImage(MultipartFile image) {
 		this.image = image;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 }

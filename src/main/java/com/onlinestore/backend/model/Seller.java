@@ -13,17 +13,27 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 @Entity
 @Table
 public class Seller implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@NotEmpty(message = "Seller name cannot be empty")
 	private String name;
+	
+	@NotEmpty(message = "Seller address cannot be empty")
 	private String address;
+	
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private Set<Product> products = new HashSet<>();
+	
+	private boolean enabled;
 	
 	public Seller() {}
 
@@ -57,6 +67,14 @@ public class Seller implements Serializable {
 
 	public void setProducts(Set<Product> products) {
 		this.products = products;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 }
