@@ -5,7 +5,7 @@ import java.util.List;
 import com.onlinestore.backend.model.Product;
 
 public interface ProductDAO {
-
+	
 	void saveOrUpdate(Product p);
 	
 	List<Product> getAllProducts();

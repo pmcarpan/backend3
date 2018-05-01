@@ -57,7 +57,7 @@ public class AppConfig {
 	}
 
 	@Autowired
-	@Bean(name="transactionManager")
+	@Bean(name = "transactionManager")
 	public HibernateTransactionManager getTransactionManager(SessionFactory sessionFactory) {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);	
 		

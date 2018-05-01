@@ -1,7 +1,11 @@
 package com.onlinestore.backend.dao;
 
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.TypedQuery;
+
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,6 +40,29 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(oD);
 	}
 
+	@Override
+	public List<OrderDetail> getAllOrders() {
+		Session s = sessionFactory.getCurrentSession();
+		TypedQuery<OrderDetail> query = s.createQuery("from OrderDetail", OrderDetail.class);
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public OrderDetail getOrderById(int id) {
+		Session s = sessionFactory.getCurrentSession();
+		TypedQuery<OrderDetail> query = s.createQuery("from OrderDetail where id = :id", OrderDetail.class);
+		query.setParameter("id", id);
+		
+		List<OrderDetail> l = query.getResultList();
+		
+		if (l == null || l.isEmpty()) {
+			return null;
+		}
+		
+		return l.get(0);
+	}
+	
 	@Override
 	public void delete(int id) {
 		

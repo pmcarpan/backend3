@@ -5,13 +5,9 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,12 +51,12 @@ public class ProductDAOImpl implements ProductDAO {
 		String ext = p.getImage().getOriginalFilename();
 		ext = "." + ext.substring(ext.lastIndexOf(".") + 1);
 		
-		File f = new File(IMAGEFOLDER + "Product" + p.getId() + ext);
-		
 		p.setImageAddress("Product" + p.getId() + ext);
 		
+		File f1 = new File(IMAGEFOLDER + p.getImageAddress());
+		
 		try {
-			p.getImage().transferTo(f);
+			p.getImage().transferTo(f1);
 		} 
 		catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -169,20 +165,6 @@ public class ProductDAOImpl implements ProductDAO {
 			
 			Product p = getProduct(id);
 			p.setEnabled(false);
-//			Seller s = p.getSeller();
-//			Category c = p.getCategory();
-			
-//			System.out.println("Sellers : " + s.getProducts());
-//			System.out.println("Categories : " + c.getProducts());
-			
-//			s.getProducts().remove(p);
-//			c.getProducts().remove(p);
-			
-			// p.setSeller(null);
-			// p.setCategory(null);
-			
-//			System.out.println("Sellers : " + s.getProducts());
-//			System.out.println("Categories : " + c.getProducts());
 			
 			sessionFactory.getCurrentSession().saveOrUpdate(p);
 		} catch (Exception e) {

@@ -17,12 +17,16 @@ import javax.persistence.Table;
 @Table
 public class Cart implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
 	private int numItems;
+	
 	private double totPrice;
-	@ManyToMany(fetch = FetchType.EAGER /*, cascade = CascadeType.REMOVE*/ )
+	
+	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Product> products = new HashSet<>();
 	
 	public Cart() {}

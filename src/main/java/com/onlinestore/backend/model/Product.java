@@ -22,7 +22,9 @@ public class Product implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
 	private int categoryId;
+	
 	private int sellerId;
 	
 	@NotNull(message = "Price must be greater than 100.00")

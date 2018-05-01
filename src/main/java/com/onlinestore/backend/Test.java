@@ -16,11 +16,8 @@ public class Test {
 		
 		AnnotationConfigApplicationContext context = 
 				new AnnotationConfigApplicationContext(AppConfig.class);
-		
-		UserDAO uDAO = context.getBean(UserDAO.class);
-		uDAO.saveOrUpdate(u);
-		
-		context.close();
+		System.out.println(System.getProperty("user.dir"));
+		System.out.println(context.getEnvironment().getProperty("user.dir"));
 	}
 	
 }

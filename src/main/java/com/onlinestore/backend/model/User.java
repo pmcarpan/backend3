@@ -11,8 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -33,9 +32,8 @@ public class User implements Serializable {
 	@Email (message = "Please enter your email address")
 	private String email;
 	
-	@NotNull (message = "Phone number should contain atleast 10 digits")
-	@Min(value = 1000000000, message = "Phone number should contain atleast 10 digits")
-	private Long phone;
+	@Pattern (regexp = "[7-9][0-9]{9}", message = "Phone number should start with 7/8/9 and must contain 10 digits")
+	private String phone;
 	
 	@NotEmpty (message = "Please enter your address")
 	private String address;
@@ -83,11 +81,11 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public Long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(Long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 
