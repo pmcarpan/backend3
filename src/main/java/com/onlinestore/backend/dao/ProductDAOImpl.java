@@ -20,6 +20,7 @@ import com.onlinestore.backend.model.Seller;
 @Transactional
 public class ProductDAOImpl implements ProductDAO {
 
+	// directory for storing images
 	private static final String IMAGEFOLDER = 
 			"C:\\Users\\Supratik basu\\git\\frontend3\\src\\main\\webapp\\resources\\images\\products\\";
 	
