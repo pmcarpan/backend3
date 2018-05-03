@@ -23,8 +23,6 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 	private SessionFactory sessionFactory;
 	@Autowired
 	private UserDAO uDAO;
-//	@Autowired
-//	private CartDAO cDAO;
 
 	@Override
 	public void saveOrUpdate(OrderDetail oD, String username) {
@@ -49,6 +47,15 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 	}
 	
 	@Override
+	public List<OrderDetail> getAllOrders(String username) {
+		Session s = sessionFactory.getCurrentSession();
+		TypedQuery<OrderDetail> query = s.createQuery("from OrderDetail where user = :user", OrderDetail.class);
+		query.setParameter("user", uDAO.getUser(username));
+		
+		return query.getResultList();
+	}
+	
+	@Override
 	public OrderDetail getOrderById(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<OrderDetail> query = s.createQuery("from OrderDetail where id = :id", OrderDetail.class);
@@ -65,7 +72,9 @@ public class OrderDetailDAOImpl implements OrderDetailDAO {
 	
 	@Override
 	public void delete(int id) {
-		
+		OrderDetail oD = new OrderDetail();
+		oD.setId(id);
+		sessionFactory.getCurrentSession().delete(oD);
 	}
 	
 }

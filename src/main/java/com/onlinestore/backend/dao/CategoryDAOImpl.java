@@ -3,19 +3,14 @@ package com.onlinestore.backend.dao;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.onlinestore.backend.model.Category;
-import com.onlinestore.backend.model.Seller;
 
 @Repository
 @Transactional
@@ -24,11 +19,13 @@ public class CategoryDAOImpl implements CategoryDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 	
+	@Override
 	public void saveOrUpdate(Category c) {
 		c.setEnabled(true);
 		sessionFactory.getCurrentSession().saveOrUpdate(c);	
 	}
 
+	@Override
 	public List<Category> getAllCategories() {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Category> query = s.createQuery("from Category where enabled = true", Category.class);
@@ -36,6 +33,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         return query.getResultList();
 	}
 
+	@Override
 	public Category getCategory(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Category> query = s.createQuery("from Category where id = :id", Category.class);
@@ -50,6 +48,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         return l.get(0);
 	}
 
+	@Override
 	public void delete(int id) {
 		Session sess = sessionFactory.getCurrentSession();
 		Category c = getCategory(id);

@@ -30,16 +30,13 @@ public class ProductDAOImpl implements ProductDAO {
 	@Autowired
 	private SellerDAO sDAO;
 	
+	@Override
 	public void saveOrUpdate(Product p) {
 		Product p1 = getProduct(p.getId());
 		
 		if (p1 == null) {
 			save(p);
 			storeImage(p); // after save, p has some id != 0
-			
-			System.out.println(p.getId());
-//			System.out.println("Sellers : " + s.getProducts());
-//			System.out.println("Categories : " + c.getProducts());
 		}
 		else {
 			update(p);
@@ -120,6 +117,7 @@ public class ProductDAOImpl implements ProductDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(p1);
 	}
 	
+	@Override
 	public List<Product> getAllProducts() {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Product> query = s.createQuery("from Product where enabled = true", Product.class);
@@ -127,6 +125,7 @@ public class ProductDAOImpl implements ProductDAO {
         return query.getResultList();
 	}
 
+	@Override
 	public List<Product> getAllProductsByCategory(int categoryId) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Product> query = s.createQuery("from Product where enabled = true and categoryId = :id", 
@@ -136,6 +135,7 @@ public class ProductDAOImpl implements ProductDAO {
         return query.getResultList();
 	}
 
+	@Override
 	public List<Product> getAllProductsBySeller(int sellerId) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Product> query = s.createQuery("from Product where enabled = true and sellerId = :id", 
@@ -145,6 +145,7 @@ public class ProductDAOImpl implements ProductDAO {
         return query.getResultList();
 	}
 
+	@Override
 	public Product getProduct(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Product> query = s.createQuery("from Product where id = :id", Product.class);
@@ -159,6 +160,7 @@ public class ProductDAOImpl implements ProductDAO {
         return l.get(0);
 	}
 
+	@Override
 	public void delete(int id) {
 		try {
 			System.out.println("\nProductDAOImpl delete()");
@@ -167,7 +169,8 @@ public class ProductDAOImpl implements ProductDAO {
 			p.setEnabled(false);
 			
 			sessionFactory.getCurrentSession().saveOrUpdate(p);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			System.out.println("ProductDAOIMPL delete()");
 			e.printStackTrace();
 		}

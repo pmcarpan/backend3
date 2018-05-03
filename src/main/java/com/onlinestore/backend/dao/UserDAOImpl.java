@@ -3,13 +3,10 @@ package com.onlinestore.backend.dao;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +24,13 @@ public class UserDAOImpl implements UserDAO {
 	@Autowired
 	private CartDAO cDAO;
 
+	@Override
 	public void saveOrUpdate(User u) {
 		try {
-			if (getUser(u.getUsername()) == null)
+			// encode password for new user
+			if (getUser(u.getUsername()) == null) {
 				u.setPassword(SHAUtil.encode(u.getPassword()));
+			}
 			
 			u.setEnabled(true);
 			
@@ -39,46 +39,33 @@ public class UserDAOImpl implements UserDAO {
 			
 			Cart c = new Cart();
 			u.setCart(c);
+			
 			cDAO.saveOrUpdate(c);
 			sessionFactory.getCurrentSession().saveOrUpdate(u);	
 		}
 		catch (GeneralSecurityException gse) {
-			System.out.println("UserDAOImpl saveOrUpdate() encoding error");
 			gse.printStackTrace();
 		}
 		catch (Exception e) {
-			System.out.println("UserDAOImpl saveOrUpdate()");
 			e.printStackTrace();
 		}
 	}
 
+	@Override
 	public List<User> getAllUsers() {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
-        criteria.select(root);
+		TypedQuery<User> query = s.createQuery("from User", User.class);
         
-        Query<User> q = s.createQuery(criteria);
-        
-        return q.getResultList();
+        return query.getResultList();
 	}
 
+	@Override
 	public User getUser(String username) {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<User> criteria = builder.createQuery(User.class);
-        Root<User> root = criteria.from(User.class);
-        criteria.select(root);
-        criteria.where( builder.equal( root.get("username"), username ) );
+		TypedQuery<User> query = s.createQuery("from User where username = :username", User.class);
+		query.setParameter("username", username);
         
-        Query<User> q = s.createQuery(criteria);
-        
-        if (q == null) {
-        	return null;
-        }
-        
-        List<User> l = q.getResultList();
+        List<User> l = query.getResultList();
         
         if (l == null || l.size() == 0) {
         	return null;
@@ -87,15 +74,24 @@ public class UserDAOImpl implements UserDAO {
         return l.get(0);
 	}
 
+	@Override
 	public void delete(String username) {
-		User u = new User();
-		u.setUsername(username);
-		sessionFactory.getCurrentSession().delete(u);
+		try {
+			User u = new User();
+			u.setUsername(username);
+			
+			sessionFactory.getCurrentSession().delete(u);
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
+	@Override
 	public boolean validate(String username, String password) {
 		User u = getUser(username);
 		
+		// user not found
 		if (u == null) {
 			return false;
 		}

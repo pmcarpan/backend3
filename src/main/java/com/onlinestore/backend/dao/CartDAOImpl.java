@@ -3,13 +3,10 @@ package com.onlinestore.backend.dao;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,50 +28,26 @@ public class CartDAOImpl implements CartDAO {
 	@Autowired
 	private UserDAO uDAO;
 
+	@Override
 	public void saveOrUpdate(Cart c) {
 		sessionFactory.getCurrentSession().saveOrUpdate(c);	
 	}
 
+	@Override
 	public List<Cart> getAllCarts() {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Cart> criteria = builder.createQuery(Cart.class);
-        Root<Cart> root = criteria.from(Cart.class);
-        criteria.select(root);
+		TypedQuery<Cart> query = s.createQuery("from Cart", Cart.class);
         
-        Query<Cart> q = s.createQuery(criteria);
-        
-        return q.getResultList();
+        return query.getResultList();
 	}
 
-	public List<Cart> getAllCarts(String username) {
-		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Cart> criteria = builder.createQuery(Cart.class);
-        Root<Cart> root = criteria.from(Cart.class);
-        criteria.select(root);
-        criteria.where( builder.equal( root.get("username"), username ) );
-        
-        Query<Cart> q = s.createQuery(criteria);
-        
-        return q.getResultList();
-	}
-
+	@Override
 	public Cart getCart(int id) {
 		Session s = sessionFactory.getCurrentSession();
-		CriteriaBuilder builder = s.getCriteriaBuilder();
-        CriteriaQuery<Cart> criteria = builder.createQuery(Cart.class);
-        Root<Cart> root = criteria.from(Cart.class);
-        criteria.select(root);
-        criteria.where( builder.equal( root.get("id"), id ) );
+		TypedQuery<Cart> query = s.createQuery("from Cart where id = :id", Cart.class);
+		query.setParameter("id", id);
         
-        Query<Cart> q = s.createQuery(criteria);
-        
-        if (q == null) {
-        	return null;
-        }
-        
-        List<Cart> l = q.getResultList();
+        List<Cart> l = query.getResultList();
         
         if (l == null || l.size() == 0) {
         	return null;
@@ -83,6 +56,7 @@ public class CartDAOImpl implements CartDAO {
         return l.get(0);
 	}
 
+	@Override
 	public void addProduct(String username, int productId) {
 		System.out.println("\nCartDAO - addProduct");
 		User u = uDAO.getUser(username);
@@ -90,19 +64,16 @@ public class CartDAOImpl implements CartDAO {
 		Cart c = u.getCart();
 		
 		Set<Product> l = c.getProducts();
-		
-		System.out.println("Initial: " + l);
 
 		if (!l.contains(p)) {
 			l.add(p); 
 			c.setNumItems(c.getNumItems() + 1);
 			cDAO.saveOrUpdate(c);
 		}
-		
-		System.out.println("Final: " + l);
 
 	}
 	
+	@Override
 	public void removeProduct(String username, int productId) {
 		User u = uDAO.getUser(username);
 		Cart c = u.getCart();
@@ -114,6 +85,7 @@ public class CartDAOImpl implements CartDAO {
 		saveOrUpdate(c);
 	}
 	
+	@Override
 	public void calcPrice(int id) {
 		Cart c = getCart(id);
 		double tot = 0;
@@ -125,6 +97,7 @@ public class CartDAOImpl implements CartDAO {
 		saveOrUpdate(c);
 	}
 	
+	@Override
 	public void delete(int id) {
 		Cart c = new Cart();
 		c.setId(id);

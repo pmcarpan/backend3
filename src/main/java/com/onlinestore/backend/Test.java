@@ -3,7 +3,6 @@ package com.onlinestore.backend;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.onlinestore.backend.config.AppConfig;
-import com.onlinestore.backend.dao.UserDAO;
 import com.onlinestore.backend.model.User;
 
 public class Test {
@@ -18,6 +17,7 @@ public class Test {
 				new AnnotationConfigApplicationContext(AppConfig.class);
 		System.out.println(System.getProperty("user.dir"));
 		System.out.println(context.getEnvironment().getProperty("user.dir"));
+		context.close();
 	}
 	
 }

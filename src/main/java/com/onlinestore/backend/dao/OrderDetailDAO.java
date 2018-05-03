@@ -10,6 +10,8 @@ public interface OrderDetailDAO {
 	
 	public List<OrderDetail> getAllOrders();
 	
+	public List<OrderDetail> getAllOrders(String username);
+	
 	public OrderDetail getOrderById(int id);
 	
 	public void delete(int id);

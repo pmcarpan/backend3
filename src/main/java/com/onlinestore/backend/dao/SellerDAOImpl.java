@@ -19,14 +19,14 @@ public class SellerDAOImpl implements SellerDAO {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-//	@Autowired
-//	private ProductDAO pDAO;
 	
+	@Override
 	public void saveOrUpdate(Seller s) {
 		s.setEnabled(true);
 		sessionFactory.getCurrentSession().saveOrUpdate(s);
 	}
 
+	@Override
 	public List<Seller> getAllSellers() {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Seller> query = s.createQuery("from Seller where enabled = true", Seller.class);
@@ -34,6 +34,7 @@ public class SellerDAOImpl implements SellerDAO {
         return query.getResultList();
 	}
 
+	@Override
 	public Seller getSeller(int id) {
 		Session s = sessionFactory.getCurrentSession();
 		TypedQuery<Seller> query = s.createQuery("from Seller where id = :id", Seller.class);
@@ -48,19 +49,12 @@ public class SellerDAOImpl implements SellerDAO {
         return l.get(0);
 	}
 
+	@Override
 	public void delete(int id) {
 		Session sess = sessionFactory.getCurrentSession();
 		Seller s = getSeller(id);
 		s.setEnabled(false);
 		sess.saveOrUpdate(s);
-		
-//		Set<Product> set = s.getProducts();
-//		Iterator<Product> i = set.iterator();
-//		while (i.hasNext()) {
-//			Product p = i.next();
-//			p.setEnabled(false);
-//			sess.saveOrUpdate(p);
-//		}
 	}
 
 }
